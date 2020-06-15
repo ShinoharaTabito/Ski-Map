@@ -1,2 +1,50 @@
-<h1>Maps#index</h1>
-<p>Find me in app/views/maps/index.html.erb</p>
+<div class="search">
+  <div class="search-form">
+    <input id="address" class="address-form"  type="textbox" placeholder="検索したいスキー場を入力してください">
+    <input class="address-btn" type="button" value="search" onclick="codeAddress()">
+    <div id="display">緯度、経度を表記します、、、。</div>
+  </div>
+
+  <div class="main-map">
+    <div id='map'></div>
+  </div>
+</div>
+
+<script>
+  let map
+
+  const display = document.getElementById('display')
+
+  function initMap(){
+    geocoder = new google.maps.Geocoder()
+
+    map = new google.maps.Map(document.getElementById('map'), {
+      center: {lat: 34.709421, lng:132.2376026},
+      zoom: 12,
+    });
+
+    marker = new google.maps.Marker({
+      position:  {lat: 34.709421, lng:132.2376026},
+      map: map
+    });
+  }
+  let geocoder
+
+  function codeAddress(){
+    let inputAddress = document.getElementById('address').value;
+
+    geocoder.geocode( { 'address': inputAddress}, function(results, status) {
+      if (status == 'OK') {
+        map.setCenter(results[0].geometry.location);
+        var marker = new google.maps.Marker({
+            map: map,
+            position: results[0].geometry.location
+        });
+        display.textContent = "検索結果(緯度,経度)：" + results[ 0 ].geometry.location
+      } else {
+        alert('該当する結果がありませんでした：' + status);
+      }
+    });   
+  }
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBfuGsaQUbaYIk-h_-P9xiDNwLD1fw2Gko&callback=initMap" async defer></script>
